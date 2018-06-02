@@ -1,5 +1,5 @@
 .idea/
-dubbo-demo-provider/target/
+target/
 *.iml
 *.bak
 tomcat/
