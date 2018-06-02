@@ -1,0 +1,6 @@
+.idea/
+dubbo-demo-provider/target/
+*.iml
+*.bak
+tomcat/
+rebel.xml

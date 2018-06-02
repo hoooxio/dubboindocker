@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 父 pom 管理公共内容 -->
+    <parent>
+        <groupId>cn.wolfcode</groupId>
+        <artifactId>dubbo-demo-parent</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../dubbo-demo-parent/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>dubbo-demo-provider</artifactId>
+
+    <!--  统一配置信息 -->
+    <properties>
+        <!-- 项目配置 -->
+        <app.env>docker</app.env>
+        <dubbo.server.hostname>dubbo-server</dubbo.server.hostname>
+        <project.env>dev</project.env>
+    </properties>
+
+    <dependencies>
+        <!-- 自身的 api 依赖 -->
+        <dependency>
+            <groupId>cn.wolfcode</groupId>
+            <artifactId>dubbo-demo-api</artifactId>
+        </dependency>
+
+        <!-- dubbo2springboot 桥接包 -->
+        <dependency>
+            <groupId>com.gitee.reger</groupId>
+            <artifactId>spring-boot-starter-dubbo</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <!-- 配置文件置换，将 maven 中的 properties 属性映射到对应的文件中 -->
+        <resources>
+            <!-- 将所有配置信息全部放到 pom 中进行统一管理 -->
+            <resource>
+                <directory>src/main/assembly</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>assembly.xml</include>
+                    <include>bin/*.sh</include>
+                </includes>
+                <!--<excludes>-->
+                    <!--<exclude>assembly.xml</exclude>-->
+                    <!--<exclude>bin/*.sh</exclude>-->
+                <!--</excludes>-->
+            </resource>
+        </resources>
+        <plugins>
+            <!-- 启用主插件，其他使用父项目配置 -->
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <!-- 运行jar包时运行的主类，要求类全名 -->
+                            <mainClass>cn.wolfcode.dubbo.ServerLauncher</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <!-- 项目拆包插件 -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+            </plugin>
+            <!-- docker 镜像构建插件 -->
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.4.12</version>
+                <configuration>
+                    <!-- 构建后的镜像名称 -->
+                    <imageName>${project.name}:${project.version}</imageName>
+                    <!-- Dockerfile 所在目录 -->
+                    <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}-${project.env}.tar.gz</include>
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!-- 开发环境配置 -->
+        <profile>
+            <id>dev</id>
+            <properties>
+                <application.name>dubbo-demo-provider-dev</application.name>
+                <registry.address>zookeeper://192.168.56.101:2181</registry.address>
+                <protocol.name>dubbo</protocol.name>
+                <protocol.port>20880</protocol.port>
+                <scan.basepackage>cn.wolfcode.dubbo.service</scan.basepackage>
+            </properties>
+            <activation>
+                <!-- 默认使用开发环境 -->
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <!-- 测试环境配置 -->
+        <profile>
+            <id>test</id>
+            <properties>
+                <application.name>dubbo-demo-provider-test</application.name>
+                <registry.address>zookeeper://${dubbo.server.hostname}:2181</registry.address>
+                <protocol.name>dubbo</protocol.name>
+                <protocol.port>20880</protocol.port>
+                <scan.basepackage>cn.wolfcode.dubbo.service</scan.basepackage>
+            </properties>
+        </profile>
+        <!-- 生产环境配置 -->
+        <profile>
+            <id>prd</id>
+            <properties>
+                <application.name>dubbo-demo-provider</application.name>
+                <registry.address>zookeeper://${dubbo.server.hostname}:2181</registry.address>
+                <protocol.name>dubbo</protocol.name>
+                <protocol.port>20880</protocol.port>
+                <scan.basepackage>cn.wolfcode.dubbo.service</scan.basepackage>
+            </properties>
+        </profile>
+    </profiles>
+</project>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 父 pom 管理公共内容 -->
+    <parent>
+        <groupId>cn.wolfcode</groupId>
+        <artifactId>dubbo-demo-parent</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../dubbo-demo-parent/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>dubbo-demo-consumer</artifactId>
+
+    <properties>
+        <!-- 使用 jdk 1.8 -->
+        <java.version>1.8</java.version>
+    </properties>
+
+    <dependencies>
+        <!-- 自身的 api 项目 -->
+        <dependency>
+            <groupId>cn.wolfcode</groupId>
+            <artifactId>dubbo-demo-api</artifactId>
+        </dependency>
+
+        <!-- dubbo2springboot 桥接包 -->
+        <dependency>
+            <groupId>com.gitee.reger</groupId>
+            <artifactId>spring-boot-starter-dubbo</artifactId>
+        </dependency>
+
+        <!-- spring boot web 依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-annotations</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Support our own plugin -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <fork>true</fork>
+                    <mainClass>cn.wolfcode.dubbo.ConsumerLauncher</mainClass>
+                    <layout>ZIP</layout>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!-- 开发环境配置 -->
+        <profile>
+            <id>dev</id>
+            <properties>
+                <application.name>dubbo-demo-consumer-dev</application.name>
+                <registry.address>zookeeper://192.168.56.101:2181</registry.address>
+                <protocol.name>dubbo</protocol.name>
+                <scan.basepackage>cn.wolfcode.dubbo.controller</scan.basepackage>
+            </properties>
+            <activation>
+                <!-- 默认使用开发环境 -->
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <!-- 测试环境配置 -->
+        <profile>
+            <id>test</id>
+            <properties>
+                <application.name>dubbo-demo-consumer-test</application.name>
+                <registry.address>zookeeper://192.168.56.101:2181</registry.address>
+                <protocol.name>dubbo</protocol.name>
+                <protocol.port>20880</protocol.port>
+                <scan.basepackage>cn.wolfcode.dubbo.controller</scan.basepackage>
+            </properties>
+        </profile>
+        <!-- 生产环境配置 -->
+        <profile>
+            <id>prd</id>
+            <properties>
+                <application.name>dubbo-demo-consumer</application.name>
+                <registry.address>zookeeper://192.168.56.101:2181</registry.address>
+                <protocol.name>dubbo</protocol.name>
+                <protocol.port>20880</protocol.port>
+                <scan.basepackage>cn.wolfcode.dubbo.controller</scan.basepackage>
+            </properties>
+        </profile>
+    </profiles>
+</project>
