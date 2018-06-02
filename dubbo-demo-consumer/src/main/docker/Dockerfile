@@ -5,10 +5,9 @@
 FROM dockette/jdk8
 
 # 将打包后的项目添加到容器中指定目录
-ADD target/dubbo-demo-provider-1.0.0-prd.tar.gz /opt/java/dubbo
+ADD dubbo-demo-consumer-1.0.0.jar /app.jar
 
-# 切换动作目录
-WORKDIR /opt/java/dubbo/dubbo-demo-provider-1.0.0
+EXPOSE 8080
 
 # 运行启动脚本
-CMD ["bin/start.sh"]
+CMD ["java","-jar","/app.jar"]

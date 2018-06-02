@@ -36,12 +36,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-annotations</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 
@@ -61,7 +55,26 @@
                 <configuration>
                     <fork>true</fork>
                     <mainClass>cn.wolfcode.dubbo.ConsumerLauncher</mainClass>
-                    <layout>ZIP</layout>
+                    <layout>JAR</layout>
+                </configuration>
+            </plugin>
+            <!-- docker 镜像构建插件 -->
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.4.12</version>
+                <configuration>
+                    <!-- 构建后的镜像名称 -->
+                    <imageName>${project.name}:${project.version}</imageName>
+                    <!-- Dockerfile 所在目录 -->
+                    <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
                 </configuration>
             </plugin>
         </plugins>

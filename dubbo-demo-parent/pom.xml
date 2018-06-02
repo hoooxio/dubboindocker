@@ -73,11 +73,6 @@
                                 <classpathPrefix>./</classpathPrefix>
                             </manifest>
                         </archive>
-                        <!-- 排除 jar 包中的配置文件 -->
-                        <excludes>
-                            <exclude>**/*.properties</exclude>
-                            <exclude>**/*.xml</exclude>
-                        </excludes>
                     </configuration>
                 </plugin>
                 <!-- pom 中定义 assembly -->

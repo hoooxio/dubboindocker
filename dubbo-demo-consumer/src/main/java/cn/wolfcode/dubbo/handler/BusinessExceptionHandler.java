@@ -22,7 +22,7 @@ public class BusinessExceptionHandler {
     }
 
     private Map<String, Object> build(Exception e) {
-        Map<String, Object> ret = new HashMap<>(2);
+        Map<String, Object> ret = new HashMap<String, Object>(2);
         ret.put("msg", e.getMessage());
         ret.put("code", DEFAULT_SERVER_EXCEPTION_CODE);
         return ret;

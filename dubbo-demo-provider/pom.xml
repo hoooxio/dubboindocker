@@ -64,6 +64,11 @@
                             <mainClass>cn.wolfcode.dubbo.ServerLauncher</mainClass>
                         </manifest>
                     </archive>
+                    <!-- 排除 jar 包中的配置文件 -->
+                    <excludes>
+                        <exclude>**/*.properties</exclude>
+                        <exclude>**/*.xml</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <!-- 项目拆包插件 -->
