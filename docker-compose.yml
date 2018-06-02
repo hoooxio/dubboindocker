@@ -18,7 +18,7 @@ services:
     command: redis-server /etc/redis/redis.conf
   # dubbo provider 容器
   db_provider:
-    image: dubbo-provider
+    image: dubbo-demo-provider:1.0.0
     ports:
       - 20880:20880
     hostname: dubbo-server
@@ -27,7 +27,7 @@ services:
     command: bin/start.sh
   # dubbo consumer 容器
   db_consumer:
-    image: dubbo-consumer
+    image: dubbo-demo-consumer:1.0.0
     ports:
       - 8080:8080
     command: java -jar app.jar
